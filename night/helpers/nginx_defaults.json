@@ -234,7 +234,9 @@
   },
 
   "http_headers": {
-    "expires": "off"
+    "expires": "off",
+    "add_header_inherit": "on",
+    "add_trailer_inherit": "on"
   },
 
   "http_hls": {

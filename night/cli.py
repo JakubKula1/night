@@ -62,11 +62,14 @@ def scan(config_path):
         console.print("[bold green][+] No vulnerabilities found! Nginx is secure.[/bold green]")
         return
 
-    console.print(f"[bold red][!] Found {len(results)} misconfigurations:[/bold red]\n")
+    total_issues = sum(len(res['occurrences']) for res in results)
+    console.print(f"[bold red][!] Found {total_issues} misconfigurations:[/bold red]\n")
     for res in results:
         console.print(f"  [red]✗ {res['rule']}[/red]")
         console.print(f"    [yellow]Description:[/yellow] {res['description']}")
-        console.print(f"    [dim]File: {res['file']} (Line: {res['line']})[/dim]\n")
+        for occ in res['occurrences']:
+            console.print(f"    [dim]File: {occ['file']} (Line: {occ['line']})[/dim]")
+        console.print()
 
 
 
