@@ -25,7 +25,7 @@ def _run(cmd: list[str], check: bool = True, capture: bool = False) -> subproces
 def _nginx_reload() -> bool:
     test = _run(["nginx", "-t"], check=False, capture=True)
     if test.returncode != 0:
-        console.print(f"[bold red][WAF] ✘ nginx -t failed:\n{test.stderr}[/bold red]")
+        console.print(f"[bold red][WAF] ✗ nginx -t failed:\n{test.stderr}[/bold red]")
         return False
     _run(["systemctl", "reload", "nginx"])
     console.print("[bold green][WAF] ✔ Nginx reloaded.[/bold green]")
@@ -73,12 +73,12 @@ class ModSecurityManager:
     def set_engine_mode(self, mode: str) -> bool:
         """Set SecRuleEngine mode in modsecurity.conf."""
         if not MODSEC_CONF.exists():
-            console.print(f"[bold red][WAF] ✘ {MODSEC_CONF} not found. Run install_deps.sh first.[/bold red]")
+            console.print(f"[bold red][WAF] ✗ {MODSEC_CONF} not found. Run install_deps.sh first.[/bold red]")
             return False
 
         valid = {"On", "DetectionOnly", "Off"}
         if mode not in valid:
-            console.print(f"[bold red][WAF] ✘ Invalid mode '{mode}'. Must be one of {valid}[/bold red]")
+            console.print(f"[bold red][WAF] ✗ Invalid mode '{mode}'. Must be one of {valid}[/bold red]")
             return False
 
         # Try to replace existing SecRuleEngine line
@@ -114,12 +114,12 @@ Include {CRS_PATH}/rules/*.conf
     def set_crs_paranoia_level(self, level: int) -> bool:
         """Set the OWASP CRS paranoia level (1–4)."""
         if not (1 <= level <= 4):
-            console.print("[bold red][WAF] ✘ Paranoia level must be 1–4.[/bold red]")
+            console.print("[bold red][WAF] ✗ Paranoia level must be 1–4.[/bold red]")
             return False
 
         setup = CRS_PATH / "crs-setup.conf"
         if not setup.exists():
-            console.print("[bold red][WAF] ✘ crs-setup.conf not found. Install OWASP CRS first.[/bold red]")
+            console.print("[bold red][WAF] ✗ crs-setup.conf not found. Install OWASP CRS first.[/bold red]")
             return False
 
         # TODO auto-patching doesnt work
@@ -146,7 +146,7 @@ Include {CRS_PATH}/rules/*.conf
         """Inject modsecurity directives into an Nginx server block."""
         cfg = Path(server_config_path or "/etc/nginx/sites-available/default")
         if not cfg.exists():
-            console.print(f"[bold red][WAF] ✘ {cfg} not found.[/bold red]")
+            console.print(f"[bold red][WAF] ✗ {cfg} not found.[/bold red]")
             return False
 
         text = cfg.read_text()
@@ -222,13 +222,13 @@ Include {CRS_PATH}/rules/*.conf
             4. Inject directives into Nginx config
         """
         if not self.is_lib_installed():
-            console.print("[bold red][WAF] ✘ libmodsecurity not found. Run install_deps.sh first.[/bold red]")
+            console.print("[bold red][WAF] ✗ libmodsecurity not found. Run install_deps.sh first.[/bold red]")
             return
         if not self.is_module_installed():
-            console.print("[bold red][WAF] ✘ Nginx ModSecurity module not found. Run install_deps.sh first.[/bold red]")
+            console.print("[bold red][WAF] ✗ Nginx ModSecurity module not found. Run install_deps.sh first.[/bold red]")
             return
         if not self.is_crs_installed():
-            console.print("[bold red][WAF] ✘ OWASP CRS not found. Run install_deps.sh first.[/bold red]")
+            console.print("[bold red][WAF] ✗ OWASP CRS not found. Run install_deps.sh first.[/bold red]")
             return
 
         self.write_main_conf()
@@ -273,10 +273,10 @@ def run_interactive() -> None:
     console.print("[bold]╚════════════════════════════════════════╝[/bold]\n")
 
     s = _mgr.status()
-    libmodsec_icon = "[green]✔[/green]" if s['lib_installed'] else "[red]✘[/red]"
-    nginx_mod_icon = "[green]✔[/green]" if s['module_installed'] else "[red]✘[/red]"
-    crs_icon = "[green]✔[/green]" if s['crs_installed'] else "[red]✘[/red]"
-    main_conf_icon = "[green]✔[/green]" if s['main_conf_exists'] else "[red]✘[/red]"
+    libmodsec_icon = "[green]✔[/green]" if s['lib_installed'] else "[red]✗[/red]"
+    nginx_mod_icon = "[green]✔[/green]" if s['module_installed'] else "[red]✗[/red]"
+    crs_icon = "[green]✔[/green]" if s['crs_installed'] else "[red]✗[/red]"
+    main_conf_icon = "[green]✔[/green]" if s['main_conf_exists'] else "[red]✗[/red]"
 
     console.print(f"  libmodsecurity    : {libmodsec_icon}")
     console.print(f"  Nginx module      : {nginx_mod_icon}")

@@ -13,7 +13,7 @@ def _import_modules():
 
 
 def _status_icon(ok: bool) -> str:
-    return "[bold green]✔[/bold green]" if ok else "[bold red]✘[/bold red]"
+    return "[bold green]✔[/bold green]" if ok else "[bold red]✗[/bold red]"
 
 
 def _print_header(tls_mod, fw_mod, ips_mod, waf_mod) -> None:

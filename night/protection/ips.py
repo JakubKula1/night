@@ -197,7 +197,7 @@ def install_jails(bantime: str = "1d", findtime: str = "1d", maxretry: int = 5) 
     console.print("[cyan]Testing Fail2ban configuration...[/cyan]")
     test = _run(["fail2ban-server", "-t"], check=False, capture=True)
     if test.returncode != 0:
-        console.print(f"[bold red][IPS] ✘ Fail2ban configuration test failed. Reverting changes.[/bold red]\n{test.stderr}")
+        console.print(f"[bold red][IPS] ✗ Fail2ban configuration test failed. Reverting changes.[/bold red]\n{test.stderr}")
         if Path(f"{JAIL_FILE}.night-backup").exists():
             shutil.move(f"{JAIL_FILE}.night-backup", JAIL_FILE)
         return
@@ -209,7 +209,7 @@ def install_jails(bantime: str = "1d", findtime: str = "1d", maxretry: int = 5) 
 def deploy(bantime: str = "1d", findtime: str = "1d", maxretry: int = 5) -> None:
     """Full deploy: install filters + jails + restart."""
     if not _f2b_available():
-        console.print("[bold red][IPS] ✘ fail2ban-client not found. Run install_dependencies.sh first.[/bold red]")
+        console.print("[bold red][IPS] ✗ fail2ban-client not found. Run install_dependencies.sh first.[/bold red]")
         return
     install_filters()
     install_jails(bantime, findtime, maxretry)
@@ -262,7 +262,7 @@ def ban_ip(ip: str, jail: str = "nginx-4xx") -> None:
     if result.returncode == 0:
         console.print(f"[bold green][IPS] ✔ Banned {ip} in jail '{jail}'.[/bold green]")
     else:
-        console.print(f"[bold red][IPS] ✘ Failed to ban {ip}:[/bold red] {result.stderr.strip()}")
+        console.print(f"[bold red][IPS] ✗ Failed to ban {ip}:[/bold red] {result.stderr.strip()}")
 
 
 def print_status() -> None:
@@ -290,8 +290,8 @@ def run_interactive() -> None:
     console.print("[bold]╚════════════════════════════════════════╝[/bold]\n")
 
     s = status()
-    available_icon = "[green]✔[/green]" if s['available'] else "[red]✘[/red]"
-    active_icon = "[green]✔[/green]" if s['active'] else "[red]✘[/red]"
+    available_icon = "[green]✔[/green]" if s['available'] else "[red]✗[/red]"
+    active_icon = "[green]✔[/green]" if s['active'] else "[red]✗[/red]"
 
     console.print(f"  fail2ban installed: {available_icon}")
     console.print(f"  fail2ban active   : {active_icon}")

@@ -42,7 +42,7 @@ class UFWManager:
                              None means allow from anywhere (less safe).
         """
         if not _ufw_available():
-            console.print("[bold red][Firewall] ✘ ufw not found. Run install_dependencies.sh first.[/bold red]")
+            console.print("[bold red][Firewall] ✗ ufw not found. Run install_dependencies.sh first.[/bold red]")
             return
 
         console.print("[cyan][Firewall] Resetting UFW rules ...[/cyan]")
@@ -87,7 +87,7 @@ class UFWManager:
                 from_ip:   Source CIDR to restrict the rule to (optional).
         """
         if not _ufw_available():
-            console.print("[bold red][Firewall] ✘ ufw not found.[/bold red]")
+            console.print("[bold red][Firewall] ✗ ufw not found.[/bold red]")
             return
 
         if from_ip:
@@ -177,7 +177,7 @@ class NftablesManager:
                 ssh_only_subnet: If set, restrict SSH to this CIDR in nftables.
         """
         if not _nft_available():
-            console.print("[bold red][Firewall] ✘ nft not found. Run install_dependencies.sh first.[/bold red]")
+            console.print("[bold red][Firewall] ✗ nft not found. Run install_dependencies.sh first.[/bold red]")
             return
 
         ruleset = NFT_BASE_RULESET
@@ -231,10 +231,10 @@ def run_interactive() -> None:
     console.print("[bold]╚══════════════════════════════════╝[/bold]\n")
 
     s = status()
-    ufw_av_icon = "[green]✔[/green]" if s['ufw']['available'] else "[red]✘[/red]"
-    ufw_ac_icon = "[green]✔[/green]" if s['ufw']['active'] else "[red]✘[/red]"
-    nft_av_icon = "[green]✔[/green]" if s['nftables']['available'] else "[red]✘[/red]"
-    nft_ac_icon = "[green]✔[/green]" if s['nftables']['service_active'] else "[red]✘[/red]"
+    ufw_av_icon = "[green]✔[/green]" if s['ufw']['available'] else "[red]✗[/red]"
+    ufw_ac_icon = "[green]✔[/green]" if s['ufw']['active'] else "[red]✗[/red]"
+    nft_av_icon = "[green]✔[/green]" if s['nftables']['available'] else "[red]✗[/red]"
+    nft_ac_icon = "[green]✔[/green]" if s['nftables']['service_active'] else "[red]✗[/red]"
 
     console.print(f"  UFW available     : {ufw_av_icon}")
     console.print(f"  UFW active        : {ufw_ac_icon}")

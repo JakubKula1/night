@@ -85,12 +85,15 @@ def harden(config_path):
     # TODO implement conf hardening module
 
 
-@cli.command()
-@click.argument('script_path', type=click.Path(), default='./testing/test_all.py')
-def test(script_path):
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
+@click.pass_context
+def test(ctx):
     """Run a test suite on your Nginx instance."""
-    # TODO implement test module
-    pass
+    from .testing.menu import main as testing_menu
+    testing_menu(ctx.args)
 
 
 @cli.command()

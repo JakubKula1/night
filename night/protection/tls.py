@@ -21,7 +21,7 @@ def _nginx_reload() -> bool:
     """Test nginx config, then reload. Returns True on success."""
     test = _run(["nginx", "-t"], check=False, capture=True)
     if test.returncode != 0:
-        console.print(f"[bold red][TLS] ✘ nginx -t failed:\n{test.stderr}[/bold red]")
+        console.print(f"[bold red][TLS] ✗ nginx -t failed:\n{test.stderr}[/bold red]")
         return False
     _run(["systemctl", "reload", "nginx"])
     console.print("[bold green][TLS] ✔ Nginx reloaded.[/bold green]")
@@ -87,7 +87,7 @@ def obtain_certificate(domains: list[str], email: str, webroot: bool = False, we
             True on success, False on failure.
     """
     if not check_certbot():
-        console.print("[bold red][TLS] ✘ certbot not found. Run install_dependencies.sh first.[/bold red]")
+        console.print("[bold red][TLS] ✗ certbot not found. Run install_dependencies.sh first.[/bold red]")
         return False
 
     domain_flags = []
@@ -114,7 +114,7 @@ def obtain_certificate(domains: list[str], email: str, webroot: bool = False, we
     console.print(f"[cyan][TLS] Running certbot for: {', '.join(domains)}...[/cyan]")
     result = _run(cmd, check=False)
     if result.returncode != 0:
-        console.print("[bold red][TLS] ✘ certbot failed (see terminal output).[/bold red]")
+        console.print("[bold red][TLS] ✗ certbot failed (see terminal output).[/bold red]")
         return False
 
     console.print("[bold green][TLS] ✔ Certificate obtained.[/bold green]")
@@ -177,7 +177,7 @@ def verify_renewal() -> None:
         console.print("[bold green][TLS] ✔ Renewal dry-run passed.[/bold green]")
     else:
         # TODO output relevant certbot logs
-        console.print("[bold red][TLS] ✘ Renewal dry-run failed – check certbot logs.[/bold red]")
+        console.print("[bold red][TLS] ✗ Renewal dry-run failed – check certbot logs.[/bold red]")
 
 
 def status() -> dict:
@@ -204,8 +204,8 @@ def run_interactive() -> None:
     console.print("[bold]╚══════════════════════════════════╝[/bold]\n")
 
     s = status()
-    cert_icon = "[green]✔[/green]" if s['certbot_installed'] else "[red]✘[/red]"
-    snip_icon = "[green]✔[/green]" if s['hardened_snippet'] else "[red]✘[/red]"
+    cert_icon = "[green]✔[/green]" if s['certbot_installed'] else "[red]✗[/red]"
+    snip_icon = "[green]✔[/green]" if s['hardened_snippet'] else "[red]✗[/red]"
 
     console.print(f"  certbot installed : {cert_icon}")
     console.print(f"  existing certs    : {', '.join(s['certificates']) or 'none'}")

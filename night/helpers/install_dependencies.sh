@@ -16,7 +16,7 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 OK="${GREEN}[✔]${NC}"
-MISS="${RED}[✘]${NC}"
+MISS="${RED}[✗]${NC}"
 INFO="${CYAN}[i]${NC}"
 WARN="${YELLOW}[!]${NC}"
 
