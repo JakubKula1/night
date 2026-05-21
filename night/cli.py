@@ -65,7 +65,7 @@ def scan(config_path):
     total_issues = sum(len(res['occurrences']) for res in results)
     console.print(f"[bold red][!] Found {total_issues} misconfigurations:[/bold red]\n")
     for res in results:
-        console.print(f"  [red]✗ {res['rule']}[/red]")
+        console.print(f"  [red]x {res['rule']}[/red]")
         console.print(f"    [yellow]Description:[/yellow] {res['description']}")
         for occ in res['occurrences']:
             console.print(f"    [dim]File: {occ['file']} (Line: {occ['line']})[/dim]")
@@ -75,14 +75,32 @@ def scan(config_path):
 
 @cli.command()
 @click.argument('config_path', type=click.Path(), default='/etc/nginx/nginx.conf')
+#@click.option('--dry-run', is_flag=True, default=False)
 def harden(config_path):
     """Generate a hardened Nginx configuration file."""
     if os.geteuid() != 0:
-        console.print("[bold red][✗] Error: You must run 'harden' with sudo to modify files.[/bold red]")
+        console.print("[bold red][x] Error: You must run 'harden' with sudo to modify files.[/bold red]")
         return
 
-    console.print(f"[bold yellow][*] Hardening {config_path}...[/bold yellow]")
-    # TODO implement conf hardening module
+    from .harden.harden import harden_config
+    summary = harden_config(config_path)
+
+    console.print("\n[bold]-- Hardening Summary --------------------------------[/bold]")
+    console.print(f"  Findings detected : [yellow]{summary['findings']}[/yellow]")
+    console.print(f"  Files patched     : [green]{summary['files_patched']}[/green]")
+
+    if summary.get('applied'):
+        console.print("  Applied fixes:")
+        for fix in summary['applied']:
+            if 'MANUAL REVIEW' in fix:
+                console.print(f"    [yellow]• {fix}[/yellow]")
+            else:
+                console.print(f"    [green]•[/green] {fix}")
+
+    if summary.get('skipped'):
+        console.print("  Skipped files (not on disk):")
+        for s in summary['skipped']:
+            console.print(f"    [dim]•[/dim] {s}")
 
 
 @cli.command(context_settings=dict(
@@ -100,7 +118,7 @@ def test(ctx):
 def protect():
     """Implement active protection modules."""
     if os.geteuid() != 0:
-        console.print("[bold red][✗] Error: You must run 'protect' with sudo to implement certain changes.[/bold red]")
+        console.print("[bold red][x] Error: You must run 'protect' with sudo to implement certain changes.[/bold red]")
         return
 
     from .protection.menu import run as active_defense_menu

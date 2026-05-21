@@ -15,3 +15,4 @@ env/
 *.log
 *.tmp
 night/reporting/
+configs

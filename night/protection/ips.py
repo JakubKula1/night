@@ -144,12 +144,12 @@ logpath  = /var/log/nginx/error.log
 maxretry = 10
 
 # ── UFW log monitoring ───────────────────────────────────────────────────────
-[ufw-probe]
-enabled  = true
-filter   = ufw
-logpath  = /var/log/ufw.log
-maxretry = 5
-bantime  = 86400
+# [ufw-probe]
+# enabled  = true
+# filter   = ufw
+# logpath  = /var/log/ufw.log
+# maxretry = 5
+# bantime  = 86400
 """
 
 FILTER_DIR = Path("/etc/fail2ban/filter.d")

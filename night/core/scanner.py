@@ -30,7 +30,8 @@ class Scanner:
             file_path = config_file['file']
             parsed_ast = config_file['parsed']
 
-            self._traverse(parsed_ast, file_path, self.directives.copy(), context_name="global")
+            directives_copy = self.directives.copy()
+            self._traverse(parsed_ast, file_path, directives_copy, context_name="global")
 
         grouped_findings = {}
         for finding in self.raw_results:

@@ -14,13 +14,16 @@ def check(block, file_path, state, context_name):
 
         arg_str = " ".join(args)
 
-        if cmd == 'server_tokens' and arg_str == 'on':
-            findings.append({
-                'rule_id': 'DC-001',
-                'rule': 'Server Version Leak (CWE-200)',
-                'description': "'server_tokens on' directive leaks the exact Nginx version.",
-                'file': file_path, 'line': line
-            })
+        if cmd == 'server_tokens':
+            if arg_str == 'off':
+                state['server_tokens'] = 'off'
+            else:
+                findings.append({
+                    'rule_id': 'DC-001',
+                    'rule': 'Server Version Leak (CWE-200)',
+                    'description': "'server_tokens on' directive leaks the exact Nginx version.",
+                    'file': file_path, 'line': line
+                })
 
         elif cmd == 'merge_slashes' and arg_str == 'off':
             findings.append({
